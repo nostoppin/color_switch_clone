@@ -18,15 +18,24 @@ public class playerMovement : MonoBehaviour
     public Color purpleColor;
 
     private float ballJumpVel = 4.5f;
-    public float playerCurrentScore = 0f;
+    public int playerCurrentScore = 0;
 
     public bool spawnNextEnemy;
     public bool gameOverFlag;
+    public bool colorChangedFlag;
+
+    public AudioClip playerTapSound;
+    public AudioClip starCollectedSound;
+    public AudioClip colorChangeSound;
+    public AudioSource audioSourceBGmusic;
+    public AudioSource audioSourcePlayerSound;
+    public AudioSource audioSourcePlayerCoinCollected;
 
     void Start()
     {
         gameOverFlag = false;
-        playerCurrentScore = 0f;
+        colorChangedFlag = false;
+        playerCurrentScore = 0;
         playerSpriteRenderer = this.GetComponent<SpriteRenderer>();
         playerRigidBody = this.GetComponent<Rigidbody2D>();
         playerRigidBody.Sleep();
@@ -38,40 +47,49 @@ public class playerMovement : MonoBehaviour
         checkPlayerOnScreen();
         playerMovementControls();
         setCurrentScore();
-        //print(playerCurrentScore);
     }
 
     void playerMovementControls()
     {
         if(Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
-            //print("jump");
+            audioSourcePlayerSound.clip = playerTapSound;
+            audioSourcePlayerSound.Play();
+
             playerRigidBody.velocity = new Vector2(0,1) * ballJumpVel;
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        
         if (collision.tag == "collectible")
         {
+            audioSourcePlayerCoinCollected.clip = starCollectedSound;
+            audioSourcePlayerCoinCollected.Play();
+            
             collision.gameObject.SetActive(false);
             spawnNextEnemy = true;
+
             playerCurrentScore += 1;
+            
             return;
         }
 
-        //print(collision.tag);
         if (collision.tag == "colorChanger")
         {
+            audioSourcePlayerCoinCollected.clip = colorChangeSound;
+            audioSourcePlayerCoinCollected.Play();
+
             onSetRandomColor();
             Destroy(collision.gameObject);
+
+            colorChangedFlag = true;
+            
             return;
         }
-        if (collision.tag != playerCurrentColor && collision.name != "cup")
+        if (collision.tag != playerCurrentColor)
         {
             gameOverFlag = true;
             return;
-            //print("die");
         }
     }
 
@@ -80,7 +98,7 @@ public class playerMovement : MonoBehaviour
         return spawnNextEnemy;
     }
 
-    public float setCurrentScore()
+    public int setCurrentScore()
     {
         return playerCurrentScore;
     }
@@ -109,8 +127,6 @@ public class playerMovement : MonoBehaviour
             playerCurrentColor = "purple";
             playerSpriteRenderer.color = purpleColor;
         }
-
-        //print(playerCurrentColor);
     }
 
     public Vector2 sendPlayerCoordinates()

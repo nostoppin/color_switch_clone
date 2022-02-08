@@ -6,7 +6,6 @@ public class enemyMovement : MonoBehaviour
 {
     public float enemyCircleRotationSpeed = 0f;
 
-    // Update is called once per frame
     void Update()
     {
         directionAlternator(); 

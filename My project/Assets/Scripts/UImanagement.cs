@@ -20,8 +20,9 @@ public class UImanagement : MonoBehaviour
 
     public GameObject playerObjectref;
 
+    public AudioSource uiClickSoundSource;
+    public AudioClip uiClickSound;
 
-    // Start is called before the first frame update
     void Start()
     {
         gameOverTextObject.text = "Game Over";
@@ -30,7 +31,6 @@ public class UImanagement : MonoBehaviour
         pauseButton.interactable = true;
     }
 
-    // Update is called once per frame
     void Update()
     {
         checkGameOver();
@@ -40,6 +40,9 @@ public class UImanagement : MonoBehaviour
 
     public void onPauseButtonClick()
     {
+        uiClickSoundSource.clip = uiClickSound;
+        uiClickSoundSource.Play();
+
         Time.timeScale = 0f;
 
         pauseMenuPanel.SetActive(true);
@@ -48,6 +51,9 @@ public class UImanagement : MonoBehaviour
 
     public void onResumeButtonClick()
     {
+        uiClickSoundSource.clip = uiClickSound;
+        uiClickSoundSource.Play();
+
         Time.timeScale = 1f;
 
         pauseMenuPanel.SetActive(false);
@@ -56,7 +62,10 @@ public class UImanagement : MonoBehaviour
 
     public void onHomeButtonClick()
     {
-        //return to home screen
+        uiClickSoundSource.clip = uiClickSound;
+        uiClickSoundSource.Play();
+        
+        SceneManager.LoadScene(0);
     }
 
     public void scoreupdate()
@@ -77,30 +86,32 @@ public class UImanagement : MonoBehaviour
 
     public void onRetryGame()
     {
-        //get a flag from player's collision script
-        //if(playerObjectref.GetComponent<playerMovement>().gameOverFlag == true)
-        {
-            playerObjectref.GetComponent<playerMovement>().gameOverFlag = false;
-            //reset game using scene management
-            Time.timeScale = 1f;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            
-        }
+        uiClickSoundSource.clip = uiClickSound;
+        uiClickSoundSource.Play();
+
+        playerObjectref.GetComponent<playerMovement>().gameOverFlag = false;
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void setHighScore()
     {
-        float currentPlayerScore = playerObjectref.GetComponent<playerMovement>().setCurrentScore();
-        //print(g_current_score);
+        int currentPlayerScore = playerObjectref.GetComponent<playerMovement>().setCurrentScore();
+
         if (currentPlayerScore > PlayerPrefs.GetInt("HighScore"))
         {
             playerScoreOnGameOver.text = currentPlayerScore.ToString();
             gameOverTextObject.text = "New Highscore";
+
+            PlayerPrefs.SetInt("highscore", currentPlayerScore);
+            playerHighScore.text = PlayerPrefs.GetInt("highscore").ToString();
         }
         else
         {
             gameOverTextObject.text = "Game Over";
             playerScoreOnGameOver.text = currentPlayerScore.ToString();
+
+            playerHighScore.text = PlayerPrefs.GetInt("highscore").ToString();
         }
     }
 }

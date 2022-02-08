@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class enemyCircleActiveStatus : MonoBehaviour
 {
-    //need to get player coordinates and calculate visibility based on that
-
     GameObject playerObjRef;
 
     Vector2 playerCoordinates;

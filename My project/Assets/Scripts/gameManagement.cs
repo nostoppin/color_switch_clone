@@ -9,6 +9,8 @@ public class gameManagement : MonoBehaviour
     public GameObject enemyPrefabType3;
     public GameObject enemyPrefabType4;
 
+    public GameObject colorChangerPrefab;
+
     GameObject[] enemyCirclesArray;
 
     int enemyArrayPopCount = 0;
@@ -18,17 +20,18 @@ public class gameManagement : MonoBehaviour
 
     void Start()
     {
+        Application.targetFrameRate = 60;
+
         enemyArrayPopCount = 8;
 
         enemyCirclesArray = new GameObject[enemyArrayPopCount];
         initAllEnemyTypes();
     }
 
-    // Update is called once per frame
     void Update()
     {
         checkBoundsAndSpawn();
-        //checkEnemyCircleInGameView();
+        spawnColorChanger();
         checkEnemyInView();
     }
 
@@ -65,14 +68,11 @@ public class gameManagement : MonoBehaviour
 
     private void spawnEnemyCircle()
     {
-        //print(spawnValue);
         if (!(enemyCirclesArray[spawnValue].activeInHierarchy))
         {
             enemyCirclesArray[spawnValue].transform.position = new Vector2(0, playerObjRef.transform.position.y + 7.5f);
             enemyCirclesArray[spawnValue].SetActive(true);
             enemyCirclesArray[spawnValue].transform.GetChild(0).gameObject.SetActive(true);
-
-            //print(enemyCirclesArray[spawnValue].transform.GetChild(0).gameObject.name);
         }
         spawnValue++;
 
@@ -84,16 +84,10 @@ public class gameManagement : MonoBehaviour
 
     private void checkBoundsAndSpawn()
     {
-        //print(playerObjRef.GetComponent<playerMovement>().setSpawnRequest());
-
         if(playerObjRef.GetComponent<playerMovement>().setSpawnRequest() == true)
         {
-            //spawn an enemy 7units above player
             spawnEnemyCircle();
-            //choose 1 from enemy array and set active here
-            //print("spawned new ");
         }
-        //switch off spawn maker
         playerObjRef.GetComponent<playerMovement>().spawnNextEnemy = false;
     }
 
@@ -106,5 +100,14 @@ public class gameManagement : MonoBehaviour
                 enemyCirclesArray[i].SetActive(false);
             }
         }
+    }
+
+    private void spawnColorChanger()
+    {
+        if(playerObjRef.GetComponent<playerMovement>().colorChangedFlag == true)
+        {                                                                                                            //modify 
+            Instantiate(colorChangerPrefab, new Vector2(playerObjRef.transform.position.x, playerObjRef.transform.position.y + 14.5f), Quaternion.identity);
+        }
+        playerObjRef.GetComponent<playerMovement>().colorChangedFlag = false;
     }
 }
