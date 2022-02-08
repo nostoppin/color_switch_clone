@@ -12,10 +12,13 @@ public class gameManagement : MonoBehaviour
     GameObject[] enemyCirclesArray;
 
     int enemyArrayPopCount = 0;
+    int spawnValue = 0;
+
+    public GameObject playerObjRef;
 
     void Start()
     {
-        enemyArrayPopCount = 4;
+        enemyArrayPopCount = 8;
 
         enemyCirclesArray = new GameObject[enemyArrayPopCount];
         initAllEnemyTypes();
@@ -24,60 +27,84 @@ public class gameManagement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        checkBoundsAndSpawn();
+        //checkEnemyCircleInGameView();
+        checkEnemyInView();
     }
 
     private void initAllEnemyTypes()
     {
         for(int i = 0; i < enemyArrayPopCount; i++)
         {
-            if (i == 0)
+            if (i == 0 || i == 1)
             {
                 enemyCirclesArray[i] = Instantiate(enemyPrefabType1, new Vector2(0, 0), Quaternion.identity);
             }
-            if (i == 1)
+            if (i == 2 || i == 3)
             {
                 enemyCirclesArray[i] = Instantiate(enemyPrefabType2, new Vector2(0, 0), Quaternion.identity);
             }
-            if (i == 2)
+            if (i == 4 || i == 5)
             {
                 enemyCirclesArray[i] = Instantiate(enemyPrefabType3, new Vector2(0, 0), Quaternion.identity);
             }
-            if (i == 3)
+            if (i == 6 || i == 7)
             {
                 enemyCirclesArray[i] = Instantiate(enemyPrefabType4, new Vector2(0, 0), Quaternion.identity);
             }
+            
 
             enemyCirclesArray[i].SetActive(false);
         }
     }
 
-    private float getRandomValue(float minVal, float maxVal)
+    private int getRandomValue(float minVal, float maxVal)
     {
         return Mathf.RoundToInt(Random.Range(minVal, maxVal));
     }
 
     private void spawnEnemyCircle()
     {
-        float randomVal = getRandomValue(1f, 4f);
+        print(spawnValue);
+        if (!(enemyCirclesArray[spawnValue].activeInHierarchy))
+        {
+            enemyCirclesArray[spawnValue].transform.position = new Vector2(0, playerObjRef.transform.position.y + 7.5f);
+            enemyCirclesArray[spawnValue].SetActive(true);
+            enemyCirclesArray[spawnValue].transform.GetChild(0).gameObject.SetActive(true);
 
-        if(randomVal == 1f)
-        {
-            enemyCirclesArray[0].SetActive(true);
+            //print(enemyCirclesArray[spawnValue].transform.GetChild(0).gameObject.name);
         }
-        if (randomVal == 2f)
+        spawnValue++;
+
+        if(spawnValue >= 8)
         {
-            enemyCirclesArray[1].SetActive(true);
-        }
-        if (randomVal == 3f)
-        {
-            enemyCirclesArray[2].SetActive(true);
-        }
-        if (randomVal == 4f)
-        {
-            enemyCirclesArray[3].SetActive(true);
+            spawnValue = 0;
         }
     }
 
-    //private void check
+    private void checkBoundsAndSpawn()
+    {
+        //print(playerObjRef.GetComponent<playerMovement>().setSpawnRequest());
+
+        if(playerObjRef.GetComponent<playerMovement>().setSpawnRequest() == true)
+        {
+            //spawn an enemy 7units above player
+            spawnEnemyCircle();
+            //choose 1 from enemy array and set active here
+            //print("spawned new ");
+        }
+        //switch off spawn maker
+        playerObjRef.GetComponent<playerMovement>().spawnNextEnemy = false;
+    }
+
+    private void checkEnemyInView()
+    {
+        for (int i = 0; i < enemyArrayPopCount; i++)
+        {
+            if ((enemyCirclesArray[i].activeInHierarchy) && enemyCirclesArray[i].transform.position.y < playerObjRef.transform.position.y - 5f)
+            {
+                enemyCirclesArray[i].SetActive(false);
+            }
+        }
+    }
 }

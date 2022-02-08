@@ -20,6 +20,8 @@ public class playerMovement : MonoBehaviour
     private float ballJumpVel = 6.5f;
     public float playerCurrentScore = 0f;
 
+    public bool spawnNextEnemy;
+
     void Start()
     {
         playerCurrentScore = 0f;
@@ -48,6 +50,7 @@ public class playerMovement : MonoBehaviour
         if (collision.tag == "collectible")
         {
             collision.gameObject.SetActive(false);
+            spawnNextEnemy = true;
             playerCurrentScore += 1;
             return;
         }
@@ -61,11 +64,16 @@ public class playerMovement : MonoBehaviour
         }
         if (collision.tag != playerCurrentColor)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); //restart
             //print("die");
         }
 
         
+    }
+
+    public bool setSpawnRequest()
+    {
+        return spawnNextEnemy;
     }
 
     public float setCurrentScore()
@@ -99,5 +107,10 @@ public class playerMovement : MonoBehaviour
         }
 
         //print(playerCurrentColor);
+    }
+
+    public Vector2 sendPlayerCoordinates()
+    {
+        return this.transform.position;
     }
 }
