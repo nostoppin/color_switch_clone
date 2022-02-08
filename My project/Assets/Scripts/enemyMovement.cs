@@ -5,22 +5,29 @@ using UnityEngine;
 public class enemyMovement : MonoBehaviour
 {
     public float enemyCircleRotationSpeed = 0f;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     // Update is called once per frame
     void Update()
     {
+        directionAlternator(); 
         rotateEnemyCircle();
     }
 
     void rotateEnemyCircle()
     {
-        this.transform.Rotate(Vector3.forward * enemyCircleRotationSpeed * Time.deltaTime);
+        if(directionAlternator() == 0)
+        {
+            this.transform.Rotate(Vector3.forward * enemyCircleRotationSpeed * Time.deltaTime);
+        }
+        if(directionAlternator() == 1)
+        {
+            this.transform.Rotate(Vector3.back * enemyCircleRotationSpeed * Time.deltaTime);
+        }
     }
 
-   
+   float directionAlternator()
+    {
+        float randomval = Mathf.RoundToInt( Random.Range(0, 1) );
+        return randomval;
+    }
 }

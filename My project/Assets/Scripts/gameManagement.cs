@@ -65,7 +65,7 @@ public class gameManagement : MonoBehaviour
 
     private void spawnEnemyCircle()
     {
-        print(spawnValue);
+        //print(spawnValue);
         if (!(enemyCirclesArray[spawnValue].activeInHierarchy))
         {
             enemyCirclesArray[spawnValue].transform.position = new Vector2(0, playerObjRef.transform.position.y + 7.5f);

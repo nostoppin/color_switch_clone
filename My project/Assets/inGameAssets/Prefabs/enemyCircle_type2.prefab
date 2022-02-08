@@ -471,7 +471,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcf3e8bac1e9c7e47849ecad2ddc8159, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyCircleRotationSpeed: 180
+  enemyCircleRotationSpeed: 120
 --- !u!1 &2539526090930507833
 GameObject:
   m_ObjectHideFlags: 0

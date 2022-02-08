@@ -17,21 +17,25 @@ public class playerMovement : MonoBehaviour
     public Color redColor;
     public Color purpleColor;
 
-    private float ballJumpVel = 6.5f;
+    private float ballJumpVel = 4.5f;
     public float playerCurrentScore = 0f;
 
     public bool spawnNextEnemy;
+    public bool gameOverFlag;
 
     void Start()
     {
+        gameOverFlag = false;
         playerCurrentScore = 0f;
         playerSpriteRenderer = this.GetComponent<SpriteRenderer>();
         playerRigidBody = this.GetComponent<Rigidbody2D>();
+        playerRigidBody.Sleep();
         onSetRandomColor();
     }
 
     void Update()
     {
+        checkPlayerOnScreen();
         playerMovementControls();
         setCurrentScore();
         //print(playerCurrentScore);
@@ -47,6 +51,7 @@ public class playerMovement : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        
         if (collision.tag == "collectible")
         {
             collision.gameObject.SetActive(false);
@@ -62,13 +67,12 @@ public class playerMovement : MonoBehaviour
             Destroy(collision.gameObject);
             return;
         }
-        if (collision.tag != playerCurrentColor)
+        if (collision.tag != playerCurrentColor && collision.name != "cup")
         {
-            //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); //restart
+            gameOverFlag = true;
+            return;
             //print("die");
         }
-
-        
     }
 
     public bool setSpawnRequest()
@@ -112,5 +116,15 @@ public class playerMovement : MonoBehaviour
     public Vector2 sendPlayerCoordinates()
     {
         return this.transform.position;
+    }
+
+    private void checkPlayerOnScreen()
+    {
+        Vector2 cameraCurrentPos = Camera.main.transform.position;
+
+        if(this.transform.position.y < cameraCurrentPos.y - 7.5f)
+        {
+            gameOverFlag = true;
+        }
     }
 }
